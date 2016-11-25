@@ -5,34 +5,51 @@
 #    from the Redis auth server
 # 3. 
 
-# get some useful functions and global variables (the jsfuncs sources inifuncs)
-#source "/opt/retropie/supplementary/joystick-selection/jsfuncs.sh"
+source "$HOME/RetroPie-Setup/scriptmodules/helpers.sh"
+source "$HOME/RetroPie-Setup/scriptmodules/inifuncs.sh"
 
-#start_joy2key
+joy2keyStart
+iniConfig " = " '"' "$configdir/all/retroarch.cfg"
 
 trap finish TERM
 export TOP_PID=$$
 
 # XXX: get real values from `retroarch.cfg` file
-PROFILES_ROOT=$(pwd)
-LOGIN_SERVER_URL="http://127.0.0.1:3030"
+iniGet "save_profiles_directory"
+if [[ -z "$ini_value" ]]; then
+  PROFILES_ROOT="$HOME/RetroPie"
+else
+  PROFILES_ROOT="$ini_value"
+fi
 
-CURRENT_ENV="$PROFILES_ROOT/current.env"
+iniGet "save_profiles_login_server"
+if [[ -z "$ini_value" ]]; then
+  TMP_OUTPUT=$(mktemp)
+  dialog --inputbox "Enter the Login Server URL:" 0 0 2>"$TMP_OUTPUT"
+  LOGIN_SERVER_URL=$(cat "$TMP_OUTPUT")
+  iniSet "save_profiles_login_server" "$LOGIN_SERVER_URL"
+  rm "$TMP_OUTPUT"
+else
+  LOGIN_SERVER_URL="$ini_value"
+fi
+
 CURRENT_SAVE_FILES="$PROFILES_ROOT/current-save-files"
 CURRENT_SAVE_STATES="$PROFILES_ROOT/current-save-states"
+
+iniSet "savefile_directory" "$CURRENT_SAVE_FILES"
+iniSet "savestate_directory" "$CURRENT_SAVE_STATES"
 
 CURL_COMMAND="curl --silent $LOGIN_SERVER_URL/login"
 
 # display the current status info dialog and login URL
 function show_status_dialog() {
-  if [ -f "$CURRENT_ENV" ]; then
-    #echo "evaling $CURRENT_ENV"
-    eval $(cat "$CURRENT_ENV")
-    CURRENT_NAME=$FB_NAME
-    BOX_TYPE=yesno
-  else
+  iniGet "save_profiles_current_name"
+  if [[ -z "$ini_value" ]]; then
     CURRENT_NAME="** NOBODY ** 😢"
     BOX_TYPE=msgbox
+  else
+    CURRENT_NAME="$ini_value"
+    BOX_TYPE=yesno
   fi
 
   dialog \
@@ -41,7 +58,7 @@ function show_status_dialog() {
    --no-label "Logout" \
    --ok-label "Cancel" \
    --title "RetroPie Profiles" \
-   --$BOX_TYPE "Currently logged in as:\n\n    \Zb$CURRENT_NAME\ZB\n\nVisit the following URL on your mobile device to log in:\n\n    \Z4\Zu$LOGIN_SERVER_URL\Z0\ZU\n\n" \
+   --$BOX_TYPE "Currently logged in as:\n\n    \Zb$CURRENT_NAME\ZB\n\nVisit the following URL on your mobile device to log in:\n\n    \Z4\Zu$LOGIN_SERVER_URL\Z0\ZU\n\nProfiles Dir: $PROFILES_ROOT" \
    0 0
   rc=$?
   if [[ $rc != 0 ]]; then
@@ -64,15 +81,18 @@ function curl_login() {
      --msgbox "curl exit code $rc: $LOGIN" \
      0 0
   else
-    echo "$LOGIN" > "$CURRENT_ENV"
     eval $(echo "$LOGIN")
     USER_SAVE_FILES="$PROFILES_ROOT/$FB_ID/save-files"
     USER_SAVE_STATES="$PROFILES_ROOT/$FB_ID/save-states"
+
     mkdir -p "$USER_SAVE_FILES" "$USER_SAVE_STATES"
     rm -rf "$CURRENT_SAVE_FILES"
     ln -s "$USER_SAVE_FILES" "$CURRENT_SAVE_FILES"
     rm -rf "$CURRENT_SAVE_STATES"
     ln -s "$USER_SAVE_STATES" "$CURRENT_SAVE_STATES"
+
+    iniSet "save_profiles_current_id" "$FB_ID"
+    iniSet "save_profiles_current_name" "$FB_NAME"
 
     dialog \
      --colors \
@@ -84,7 +104,9 @@ function curl_login() {
 }
 
 function logout_current() {
-  rm -rf "$CURRENT_ENV" "$CURRENT_SAVE_FILES" "$CURRENT_SAVE_STATES"
+  rm -rf "$CURRENT_SAVE_FILES" "$CURRENT_SAVE_STATES"
+  iniUnset "save_profiles_current_id"
+  iniUnset "save_profiles_current_name"
   dialog \
    --colors \
    --ok-label "Close" \
@@ -95,9 +117,10 @@ function logout_current() {
 }
 
 function finish() {
+  joy2keyStop
   kill $DIALOG_PID
   kill $CURL_PID
-  pkill $CURL_COMMAND
+  pkill "$CURL_COMMAND"
   stty -raw echo
 }
 
