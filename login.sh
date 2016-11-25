@@ -43,9 +43,13 @@ function show_status_dialog() {
    --title "RetroPie Profiles" \
    --$BOX_TYPE "Currently logged in as:\n\n    \Zb$CURRENT_NAME\ZB\n\nVisit the following URL on your mobile device to log in:\n\n    \Z4\Zu$LOGIN_SERVER_URL\Z0\ZU\n\n" \
    0 0
-
-  # the user cancelled the dialog before we got a login event so close `curl`
-  kill -s TERM $TOP_PID
+  rc=$?
+  if [[ $rc != 0 ]]; then
+    logout_current
+  else
+    # the user cancelled the dialog before we got a login event so close `curl`
+    kill -s TERM $TOP_PID
+  fi
 }
 
 function curl_login() {
@@ -77,6 +81,17 @@ function curl_login() {
      --msgbox "Successfully logged in as:\n\n    \Zb$FB_NAME\ZB\n\n" \
      0 0
   fi
+}
+
+function logout_current() {
+  rm -rf "$CURRENT_ENV" "$CURRENT_SAVE_FILES" "$CURRENT_SAVE_STATES"
+  dialog \
+   --colors \
+   --ok-label "Close" \
+   --title "Logged Out" \
+   --msgbox "Logged out" \
+   0 0
+  kill -s TERM $TOP_PID
 }
 
 function finish() {
