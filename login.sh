@@ -59,13 +59,13 @@ function show_status_dialog() {
   fi
 
   dialog \
-   --colors \
-   --yes-label "Cancel" \
-   --ok-label "Cancel" \
-   --no-label "Logout" \
-   --title "RetroPie Profiles" \
-   --$BOX_TYPE "Currently logged in as:\n\n    \Zb$CURRENT_NAME\ZB\n\nVisit the following URL on your mobile device to log in:\n\n    \Z4\Zu$LOGIN_SERVER_URL\Z0\ZU\n\nProfiles dir: $PROFILES_ROOT\nConfig file: $CONFIG_FILE" \
-   0 0
+    --colors \
+    --yes-label "Cancel" \
+    --ok-label "Cancel" \
+    --no-label "Logout" \
+    --title "RetroPie Profiles" \
+    --$BOX_TYPE "Currently logged in as:\n\n    \Zb$CURRENT_NAME\ZB\n\nVisit the following URL on your mobile device to log in:\n\n    \Z4\Zu$LOGIN_SERVER_URL\Z0\ZU\n\nProfiles dir: $PROFILES_ROOT\nConfig file: $CONFIG_FILE" \
+    0 0
   rc=$?
   if [[ $rc != 0 ]]; then
     logout_current
@@ -81,11 +81,11 @@ function curl_login() {
 
   if [[ $rc != 0 ]]; then
     dialog \
-     --colors \
-     --ok-label "Close" \
-     --title "Login Error" \
-     --msgbox "curl exit code $rc: $LOGIN" \
-     0 0
+      --colors \
+      --ok-label "Close" \
+      --title "Login Error" \
+      --msgbox "curl exit code $rc: $LOGIN" \
+      0 0
   else
     eval $(echo "$LOGIN")
     USER_SAVE_FILES="$PROFILES_ROOT/$FB_ID/save-files"
@@ -103,25 +103,30 @@ function curl_login() {
     iniSet "save_profiles_current_name" "$FB_NAME"
 
     dialog \
-     --colors \
-     --ok-label "Close" \
-     --title "Login Success!" \
-     --msgbox "Successfully logged in as:\n\n    \Zb$FB_NAME\ZB\n\n" \
-     0 0
+      --colors \
+      --ok-label "Close" \
+      --title "Login Success!" \
+      --msgbox "Successfully logged in as:\n\n    \Zb$FB_NAME\ZB\n\n" \
+      0 0
   fi
 }
 
 function logout_current() {
+  iniGet "save_profiles_current_name"
+  CURRENT_NAME="$ini_value"
+
   iniUnset "savefile_directory"
   iniUnset "savestate_directory"
   iniUnset "save_profiles_current_id"
   iniUnset "save_profiles_current_name"
+
   dialog \
-   --colors \
-   --ok-label "Close" \
-   --title "Logged Out" \
-   --msgbox "Logged out" \
-   0 0
+    --colors \
+    --ok-label "Close" \
+    --title "Logged Out" \
+    --msgbox "Logged out:\n\n    \Zb$CURRENT_NAME\ZB\n\n" \
+    0 0
+
   kill -s TERM $TOP_PID
 }
 
