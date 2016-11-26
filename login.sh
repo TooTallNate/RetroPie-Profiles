@@ -39,8 +39,8 @@ if [[ -z "$ini_value" ]]; then
   TMP_OUTPUT=$(mktemp)
   dialog --inputbox "Enter the Login Server URL:" 0 0 2>"$TMP_OUTPUT"
   LOGIN_SERVER_URL=$(cat "$TMP_OUTPUT")
-  iniSet "save_profiles_login_server" "$LOGIN_SERVER_URL"
   rm "$TMP_OUTPUT"
+  iniSet "save_profiles_login_server" "$LOGIN_SERVER_URL"
 else
   LOGIN_SERVER_URL="$ini_value"
 fi
@@ -127,7 +127,8 @@ function logout_current() {
     --msgbox "Logged out:\n\n    \Zb$CURRENT_NAME\ZB\n\n" \
     0 0
 
-  kill -s TERM $TOP_PID
+  show_status_dialog
+  #kill -s TERM $TOP_PID
 }
 
 function finish() {
