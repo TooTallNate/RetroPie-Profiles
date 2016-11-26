@@ -7,7 +7,7 @@
 # 3. run a `curl` command in the background that waits
 #    for a response from the Login Server instance
 # 4a. set up a new user profile if the FB_ID is new
-# 4b. set up symlinks for the savefile and statestate directories
+# 4b. update the savefile and statestate directory entries
 #     pointing to the logged in user's dirs
 
 user="$SUDO_USER"
@@ -84,7 +84,7 @@ function curl_login() {
       --colors \
       --ok-label "Close" \
       --title "Login Error" \
-      --msgbox "curl exit code $rc: $LOGIN" \
+      --msgbox "\ncurl exit code $rc: $LOGIN\n" \
       0 0
   else
     eval $(echo "$LOGIN")
@@ -106,7 +106,7 @@ function curl_login() {
       --colors \
       --ok-label "Close" \
       --title "Login Success!" \
-      --msgbox "Successfully logged in as:\n\n    \Zb$FB_NAME\ZB\n\n" \
+      --msgbox "\nSuccessfully logged in as:\n\n    \Zb$FB_NAME\ZB\n\n" \
       0 0
   fi
 }
@@ -122,9 +122,9 @@ function logout_current() {
 
   dialog \
     --colors \
-    --ok-label "Close" \
+    --ok-label "OK" \
     --title "Logged Out" \
-    --msgbox "Logged out:\n\n    \Zb$CURRENT_NAME\ZB\n\n" \
+    --msgbox "\n\Zb$CURRENT_NAME\ZB has been logged out.\n" \
     0 0
 
   show_status_dialog
