@@ -45,12 +45,6 @@ else
   LOGIN_SERVER_URL="$ini_value"
 fi
 
-CURRENT_SAVE_FILES="$PROFILES_ROOT/current-save-files"
-CURRENT_SAVE_STATES="$PROFILES_ROOT/current-save-states"
-
-iniSet "savefile_directory" "$CURRENT_SAVE_FILES"
-iniSet "savestate_directory" "$CURRENT_SAVE_STATES"
-
 CURL_COMMAND="curl --silent $LOGIN_SERVER_URL/login"
 
 # display the current status info dialog and login URL
@@ -99,15 +93,12 @@ function curl_login() {
 
     mkdir -p "$USER_SAVE_FILES" "$USER_SAVE_STATES"
 
-    rm -rf "$CURRENT_SAVE_FILES"
-    ln -s "$USER_SAVE_FILES" "$CURRENT_SAVE_FILES"
-    rm -rf "$CURRENT_SAVE_STATES"
-    ln -s "$USER_SAVE_STATES" "$CURRENT_SAVE_STATES"
-
     # not a huge deal if this fails, but we'll try anyways
     # (i.e. the root is on a NFS drive that doesn't allow permission changes)
     chown -R $user:$user "$PROFILES_ROOT" 2>/dev/null
 
+    iniSet "savefile_directory" "$USER_SAVE_FILES"
+    iniSet "savestate_directory" "$USER_SAVE_STATES"
     iniSet "save_profiles_current_id" "$FB_ID"
     iniSet "save_profiles_current_name" "$FB_NAME"
 
@@ -121,11 +112,10 @@ function curl_login() {
 }
 
 function logout_current() {
-  rm -rf "$CURRENT_SAVE_FILES" "$CURRENT_SAVE_STATES"
-  iniUnset "save_profiles_current_id"
-  iniUnset "save_profiles_current_name"
   iniUnset "savefile_directory"
   iniUnset "savestate_directory"
+  iniUnset "save_profiles_current_id"
+  iniUnset "save_profiles_current_name"
   dialog \
    --colors \
    --ok-label "Close" \
