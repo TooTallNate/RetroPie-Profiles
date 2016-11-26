@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # install script that does the following:
 # - put `login.sh` in `$HOME/RetroPie/retropiemenu/` directory
-# - put `logo.png` in `$HOME/RetroPie/retropiemenu/logos` directory
+# - put `icon.png` in `$HOME/RetroPie/retropiemenu/icons` directory
 # - create a gamelist.xml entry for `login.sh`
 
 
@@ -13,9 +13,9 @@ cp login.sh "$HOME/RetroPie/retropiemenu/login.sh" || {
 echo " OK!"
 
 
-echo -n "Putting \"logo.png\" in \"$HOME/RetroPie/retropiemenu/logos\"..."
-cp logo.png "$HOME/RetroPie/retropiemenu/logos/save-profiles.png" || {
-  echo -e "\nUnable to put \"logo.png\" in \"$HOME/RetroPie/retropiemenu/logos\". Aborting."
+echo -n "Putting \"icon.png\" in \"$HOME/RetroPie/retropiemenu/icons\"..."
+cp icon.png "$HOME/RetroPie/retropiemenu/icons/save-profiles.png" || {
+  echo -e "\nUnable to put \"icon.png\" in \"$HOME/RetroPie/retropiemenu/icons\". Aborting."
   exit 1
 }
 echo " OK!"
@@ -38,7 +38,7 @@ gamelist_info='\
     <path>.\/login.sh<\/path>\
     <name>Save Profiles<\/name>\
     <desc>Select which profile to use for save files and save states.<\/desc>\
-    <image>.\/logos\/save-profiles.png<\/image>\
+    <image>.\/icons\/save-profiles.png<\/image>\
   <\/game>'
 
 sudo sed -i.bak "/<\/gameList>/ s/.*/${gamelist_info}\n&/" "$gamelistxml" || {
