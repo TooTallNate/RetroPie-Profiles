@@ -1,4 +1,4 @@
-RetroPie-save-profiles 💾
+RetroPie-profiles 💾
 ======================
 ### RetroPie plugin to select which profile to use for save files and save states
 
@@ -44,7 +44,7 @@ Take a look at the list of known login server implementations for some examples:
 <sub>Send a pull request to add yours to the list!</sub>
 
 If you would like to implement your own login server using Node.js, then
-it is recommended to use the [`RetroPie-save-profiles-server`][server] helper.
+it is recommended to use the [`RetroPie-profiles-server`][server] helper.
 
 
 License
