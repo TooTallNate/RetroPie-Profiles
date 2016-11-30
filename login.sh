@@ -88,10 +88,14 @@ function curl_login() {
       0 0
   else
     eval $(echo "$LOGIN")
-    USER_SAVE_FILES="$PROFILES_ROOT/$ID/save-files"
-    USER_SAVE_STATES="$PROFILES_ROOT/$ID/save-states"
+    PROFILE_ROOT="$PROFILES_ROOT/$ID"
+    USER_SAVE_FILES="$PROFILE_ROOT/save-files"
+    USER_SAVE_STATES="$PROFILE_ROOT/save-states"
 
     mkdir -p "$USER_SAVE_FILES" "$USER_SAVE_STATES"
+
+    # save down the name just for fun/debugging
+    echo "$NAME" > "$PROFILE_ROOT/.name"
 
     # not a huge deal if this fails, but we'll try anyways
     # (i.e. the root is on a NFS drive that doesn't allow permission changes)
