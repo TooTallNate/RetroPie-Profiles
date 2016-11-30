@@ -30,17 +30,21 @@ Login Servers
 The "login server" is the URL in which you will visit on your mobile device when
 the login dialog is open in RetroPie to change users. The URL is specified in
 the `retroarch.cfg` file under the `save_profiles_login_server` config key.
-The plugin will prompt you for the login server URL if the key is not already set:
 
-A login server can have literally any logic implemented for the login mechanism.
-It is recommended to use the `RetroPie-save-profiles-server` helper to implement
-your own server.
+The plugin will prompt you one time for the login server URL,
+if the key is not already set:
 
-Here's a list of known login server implementations:
+![](https://cldup.com/hgNSTGYyyH.png)
+
+A login server can have any logic implemented for the login mechanism.
+Take a look at the list of known login server implementations for some examples:
 
  - [Facebook Login][fb] - Login using your Facebook profile
 
 <sub>Send a pull request to add yours to the list!</sub>
+
+If you would like to implement your own login server using Node.js, then
+it is recommended to use the [`RetroPie-save-profiles-server`][server] helper.
 
 
 License
@@ -72,3 +76,4 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 [RetroPie]: https://retropie.org.uk/
 [sshfs]: https://github.com/libfuse/sshfs
 [fb]: https://github.com/TooTallNate/RetroPie-profiles-facebook-login
+[server]: https://github.com/TooTallNate/RetroPie-profiles-server
