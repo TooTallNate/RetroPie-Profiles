@@ -76,7 +76,7 @@ function show_status_dialog() {
 }
 
 function curl_login() {
-  LOGIN=$(curl --silent "$LOGIN_SERVER_URL/login")
+  LOGIN=$(curl --silent --location "$LOGIN_SERVER_URL/login")
   rc=$?
 
   if [[ $rc != 0 ]]; then
