@@ -128,7 +128,6 @@ function logout_current() {
     0 0
 
   show_status_dialog
-  #kill -s TERM $TOP_PID
 }
 
 function finish() {
