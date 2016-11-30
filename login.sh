@@ -6,7 +6,7 @@
 # 2. display a dialog showing the current login status
 # 3. run a `curl` command in the background that waits
 #    for a response from the Login Server instance
-# 4a. set up a new user profile if the FB_ID is new
+# 4a. set up a new user profile if the ID is new
 # 4b. update the savefile and statestate directory entries
 #     pointing to the logged in user's dirs
 
@@ -88,8 +88,8 @@ function curl_login() {
       0 0
   else
     eval $(echo "$LOGIN")
-    USER_SAVE_FILES="$PROFILES_ROOT/$FB_ID/save-files"
-    USER_SAVE_STATES="$PROFILES_ROOT/$FB_ID/save-states"
+    USER_SAVE_FILES="$PROFILES_ROOT/$ID/save-files"
+    USER_SAVE_STATES="$PROFILES_ROOT/$ID/save-states"
 
     mkdir -p "$USER_SAVE_FILES" "$USER_SAVE_STATES"
 
@@ -99,14 +99,14 @@ function curl_login() {
 
     iniSet "savefile_directory" "$USER_SAVE_FILES"
     iniSet "savestate_directory" "$USER_SAVE_STATES"
-    iniSet "save_profiles_current_id" "$FB_ID"
-    iniSet "save_profiles_current_name" "$FB_NAME"
+    iniSet "save_profiles_current_id" "$ID"
+    iniSet "save_profiles_current_name" "$NAME"
 
     dialog \
       --colors \
       --ok-label "Close" \
       --title "Login Success!" \
-      --msgbox "\nSuccessfully logged in as:\n\n    \Zb$FB_NAME\ZB\n\n" \
+      --msgbox "\nSuccessfully logged in as:\n\n    \Zb$NAME\ZB\n\n" \
       0 0
   fi
 }
