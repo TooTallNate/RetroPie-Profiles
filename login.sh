@@ -38,6 +38,11 @@ iniGet "save_profiles_login_server"
 if [[ -z "$ini_value" ]]; then
   TMP_OUTPUT=$(mktemp)
   dialog --inputbox "Enter the Login Server URL:" 0 0 2>"$TMP_OUTPUT"
+  rc=$?
+  if [[ $rc != 0 ]]; then
+    # user hit Cancel
+    exit 1
+  fi
   LOGIN_SERVER_URL=$(cat "$TMP_OUTPUT")
   rm "$TMP_OUTPUT"
   iniSet "save_profiles_login_server" "$LOGIN_SERVER_URL"
