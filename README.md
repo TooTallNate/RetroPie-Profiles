@@ -1,6 +1,8 @@
 RetroPie-profiles 💾
-======================
+====================
 ### RetroPie plugin to select which profile to use for save files and save states
+
+![](https://cloudup.com/ikSCE7oQs8F+)
 
 This is a [RetroPie][] plugin that adds an entry to the `RetroPie` "system" in
 EmulationStation. It provides a UI for logging in to your RetroPie via a login
