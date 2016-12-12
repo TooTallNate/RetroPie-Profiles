@@ -20,9 +20,16 @@ combination with [`sshfs`][sshfs] we share save files and ROMs over the cloud â˜
 Installation
 ------------
 
-Clone the repo, or extract a tarball of `master` branch to your RetroPie:
+Clone the repo, or extract a tarball of `master` branch to your RetroPie and run
+the `install.sh` script:
 
 ``` bash
+$ curl https://github.com/TooTallNate/RetroPie-profiles/archive/master.tar.gz | tar xzvf --strip-components=1 - -C RetroPie-profiles
+$ cd RetroPie-profiles
+$ ./install
+Putting "login.sh" in "/home/pi/RetroPie/retropiemenu/"... OK!
+Putting "icon.png" in "/home/pi/RetroPie/retropiemenu/icons"... OK!
+Creating a gamelist.xml entry for login.sh... OK!
 ```
 
 
