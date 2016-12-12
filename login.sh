@@ -12,8 +12,9 @@
 
 user="$SUDO_USER"
 [[ -z "$user" ]] && user=$(id -un)
+home=$(eval echo "~$user")
 
-source "$HOME/RetroPie-Setup/scriptmodules/inifuncs.sh"
+source "$home/RetroPie-Setup/scriptmodules/inifuncs.sh"
 
 CONFIG_FILE="/opt/retropie/configs/all/retroarch.cfg"
 iniConfig " = " '"' "$CONFIG_FILE"
@@ -25,7 +26,7 @@ export TOP_PID=$$
 # stored, and symlinks to the current active profile will be kept as well
 iniGet "save_profiles_directory"
 if [[ -z "$ini_value" ]]; then
-  PROFILES_ROOT="$HOME/RetroPie/save-profiles"
+  PROFILES_ROOT="$home/RetroPie/save-profiles"
   iniSet "save_profiles_directory" "$PROFILES_ROOT"
 else
   PROFILES_ROOT="$ini_value"
