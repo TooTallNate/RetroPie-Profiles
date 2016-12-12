@@ -32,6 +32,9 @@ Putting "icon.png" in "/home/pi/RetroPie/retropiemenu/icons"... OK!
 Creating a gamelist.xml entry for login.sh... OK!
 ```
 
+Then restart EmulationStation and you should see "Save Profiles" in your RetroPie
+system menu.
+
 
 Login Servers
 -------------
