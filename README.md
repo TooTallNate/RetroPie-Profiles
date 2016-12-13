@@ -26,7 +26,7 @@ the `install.sh` script:
 ``` bash
 $ curl -L https://git.io/v1i5K | tar xzvf --strip-components=1 - -C RetroPie-profiles
 $ cd RetroPie-profiles
-$ ./install
+$ ./install.sh
 ```
 
 And you should see something like:
