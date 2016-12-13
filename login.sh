@@ -92,33 +92,46 @@ function curl_login() {
       --title "Login Error" \
       --msgbox "\ncurl exit code $rc: $LOGIN\n" \
       0 0
-  else
-    eval $(echo "$LOGIN")
-    PROFILE_ROOT="$PROFILES_ROOT/$ID"
-    USER_SAVE_FILES="$PROFILE_ROOT/save-files"
-    USER_SAVE_STATES="$PROFILE_ROOT/save-states"
+    exit 1
+  fi
 
-    mkdir -p "$USER_SAVE_FILES" "$USER_SAVE_STATES"
+  # load the curl response as env variables. ID and NAME must be exported.
+  eval $(echo "$LOGIN")
 
-    # save down the name just for fun/debugging
-    echo "$NAME" > "$PROFILE_ROOT/.name"
-
-    # not a huge deal if this fails, but we'll try anyways
-    # (i.e. the root is on a NFS drive that doesn't allow permission changes)
-    chown -R $user:$user "$PROFILES_ROOT" 2>/dev/null
-
-    iniSet "savefile_directory" "$USER_SAVE_FILES"
-    iniSet "savestate_directory" "$USER_SAVE_STATES"
-    iniSet "save_profiles_current_id" "$ID"
-    iniSet "save_profiles_current_name" "$NAME"
-
+  if [[ -z "$ID" ]] || [[ -z "$NAME" ]]; then
     dialog \
       --colors \
       --ok-label "Close" \
-      --title "Login Success!" \
-      --msgbox "\nSuccessfully logged in as:\n\n    \Zb$NAME\ZB\n\n" \
+      --title "Login Error" \
+      --msgbox "\nLogin Server did not specify the ID or NAME variables!"
       0 0
+    exit 1
   fi
+
+  PROFILE_ROOT="$PROFILES_ROOT/$ID"
+  USER_SAVE_FILES="$PROFILE_ROOT/save-files"
+  USER_SAVE_STATES="$PROFILE_ROOT/save-states"
+
+  mkdir -p "$USER_SAVE_FILES" "$USER_SAVE_STATES"
+
+  # save down the name just for fun/debugging
+  echo "$NAME" > "$PROFILE_ROOT/.name"
+
+  # not a huge deal if this fails, but we'll try anyways
+  # (i.e. the root is on a NFS drive that doesn't allow permission changes)
+  chown -R $user:$user "$PROFILES_ROOT" 2>/dev/null
+
+  iniSet "savefile_directory" "$USER_SAVE_FILES"
+  iniSet "savestate_directory" "$USER_SAVE_STATES"
+  iniSet "save_profiles_current_id" "$ID"
+  iniSet "save_profiles_current_name" "$NAME"
+
+  dialog \
+    --colors \
+    --ok-label "Close" \
+    --title "Login Success!" \
+    --msgbox "\nSuccessfully logged in as:\n\n    \Zb$NAME\ZB\n\n" \
+    0 0
 }
 
 function logout_current() {
