@@ -1,5 +1,4 @@
-RetroPie-profiles 💾
-====================
+# RetroPie-profiles  <img src="./icon.png" width="48" align="right" />
 ### RetroPie plugin to select which profile to use for save files and save states
 
 ![](https://cloudup.com/ikSCE7oQs8F+)
@@ -17,8 +16,7 @@ able to resume his game saves from home and vice versa. When using this plugin i
 combination with [`sshfs`][sshfs] we share save files and ROMs over the cloud ☁️
 
 
-Installation
-------------
+## Installation
 
 Clone the repo, or extract a tarball of `master` branch to your RetroPie and run
 the `install.sh` script:
@@ -41,8 +39,7 @@ Then restart EmulationStation and you should see "Save Profiles" in your RetroPi
 system menu.
 
 
-Login Servers
--------------
+## Login Servers
 
 The "login server" is the URL in which you will visit on your mobile device when
 the login dialog is open in RetroPie to change users. The URL is specified in
@@ -64,8 +61,7 @@ If you would like to implement your own login server using Node.js, then
 it is recommended to use the [`RetroPie-profiles-server`][server] helper.
 
 
-License
--------
+## License
 
 (The MIT License)
 
