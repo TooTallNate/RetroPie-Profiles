@@ -1,8 +1,6 @@
 # RetroPie-profiles  <img src="./icon.png" width="48" align="right" />
 ### RetroPie plugin to select which profile to use for save files and save states
 
-![](https://cloudup.com/ikSCE7oQs8F+)
-
 This is a [RetroPie][] plugin that adds an entry to the `RetroPie` "system" in
 EmulationStation. It provides a UI for logging in to your RetroPie via a login
 server on your mobile device.
@@ -36,7 +34,9 @@ Creating a gamelist.xml entry for login.sh... OK!
 ```
 
 Then restart EmulationStation and you should see "Save Profiles" in your RetroPie
-system menu.
+system menu:
+
+![](https://cloudup.com/ikSCE7oQs8F+)
 
 
 ## Login Servers
