@@ -20,7 +20,7 @@ Clone the repo, or extract a tarball of `master` branch to your RetroPie and run
 the `install.sh` script:
 
 ``` bash
-$ curl -L https://git.io/v1i5K | tar xzvf --strip-components=1 - -C RetroPie-profiles
+$ curl -L https://git.io/v1i5K | tar xzvf - --strip-components=1 -C RetroPie-profiles
 $ cd RetroPie-profiles
 $ ./install.sh
 ```
