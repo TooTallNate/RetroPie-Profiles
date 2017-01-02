@@ -67,12 +67,12 @@ This plugin uses the following keys in the `retroarch.cfg` configuration file:
 
 | Key                          | Purpose                                                                                                                      |
 |------------------------------|------------------------------------------------------------------------------------------------------------------------------|
+| `savefile_directory`         | When a user logs in, this gets set to the directory for the user's save files.                                               |
+| `savestate_directory`        | When a user logs in, this gets set to the directory for the user's save states.                                              |
 | `save_profiles_login_server` | The HTTP or HTTPS server URL to connect to for profile authentication. Prompts for input when not set.                       |
 | `save_profiles_directory`    | Specify which directory to store profiles, including save files and save states. Defaults to `$HOME/RetroPie/save-profiles`. |
 | `save_profiles_current_id`   | The ID of the currently logged in user profile.                                                                              |
 | `save_profiles_current_name` | The display name of the currently logged in user profile.                                                                    |
-| `savefile_directory`         | When a user logs in, this gets set to the directory for the user's save files.                                               |
-| `savestate_directory`        | When a user logs in, this gets set to the directory for the user's save states.                                              |
 
 
 ## License
