@@ -1,0 +1,39 @@
+{
+  "name": "retropie-profiles",
+  "displayName": "RetroPie-Profiles",
+  "version": "0.0.0",
+  "description": "RetroPie plugin to create profiles for save files and save states",
+  "bin": "./build/bin/retropie-profiles.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TooTallNate/RetroPie-profiles.git"
+  },
+  "keywords": [
+    "retropie",
+    "raspberry",
+    "pie",
+    "pi",
+    "profiles",
+    "save",
+    "profiles",
+    "states",
+    "authentication"
+  ],
+  "author": "Nathan Rajlich <n@n8.io>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/TooTallNate/RetroPie-profiles/issues"
+  },
+  "homepage": "https://github.com/TooTallNate/RetroPie-profiles#readme",
+  "dependencies": {
+    "blessed": "^0.1.81",
+    "react": "^0.14.7",
+    "react-blessed": "0.1.8"
+  },
+  "devDependencies": {
+    "n8-make": "^1.8.2"
+  }
+}
