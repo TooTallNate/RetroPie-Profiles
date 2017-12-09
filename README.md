@@ -1,4 +1,4 @@
-# RetroPie-profiles  <img src="./icon.png" width="48" align="right" />
+# RetroPie-Profiles  <img src="./icon.png" width="48" align="right" />
 ### RetroPie plugin to select which profile to use for save files and save states
 
 This is a [RetroPie][] plugin that adds an entry to the `RetroPie` "system" in
