@@ -40,7 +40,7 @@ if [[ -z "$ini_value" ]]; then
   TMP_OUTPUT=$(mktemp)
   dialog --inputbox "Enter the Login Server URL:" 0 0 2>"$TMP_OUTPUT"
   rc=$?
-  if [[ $rc != 0 ]]; then
+  if [ $rc -ne 0 ]; then
     # user hit Cancel
     exit 1
   fi
@@ -73,7 +73,7 @@ function show_status_dialog() {
     --$BOX_TYPE "Currently logged in as:\n\n    \Zb$CURRENT_NAME\ZB\n\nVisit the following URL on your mobile device to log in:\n\n    \Z4\Zu$LOGIN_SERVER_URL\Z0\ZU\n\nProfiles dir: $PROFILES_ROOT\nConfig file: $CONFIG_FILE" \
     0 0
   rc=$?
-  if [[ $rc != 0 ]]; then
+  if [ $rc -ne 0 ]; then
     logout_current
   else
     # the user cancelled the dialog before we got a login event so close `curl`
@@ -85,7 +85,7 @@ function curl_login() {
   LOGIN=$(curl --silent --location "$LOGIN_SERVER_URL/login")
   rc=$?
 
-  if [[ $rc != 0 ]]; then
+  if [ $rc -ne 0 ]; then
     dialog \
       --colors \
       --ok-label "Close" \
