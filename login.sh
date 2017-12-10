@@ -128,9 +128,16 @@ function curl_login() {
   USER_SAVE_STATES="$PROFILE_ROOT/save-states"
 
   mkdir -p "$USER_SAVE_FILES" "$USER_SAVE_STATES"
-
-  # save down the name just for fun/debugging
-  echo "$NAME" > "$PROFILE_ROOT/.name"
+  rc=$?
+  if [ $rc -ne 0 ]; then
+    dialog \
+      --colors \
+      --ok-label "Close" \
+      --title "Directory creation failed" \
+      --msgbox "\nmkdir -p \"$USER_SAVE_FILES\" \"$USER_SAVE_STATES\" (exit code $rc)\n" \
+      0 0
+    exit 1
+  fi
 
   # not a huge deal if this fails, but we'll try anyways
   # (i.e. the root is on a NFS drive that doesn't allow permission changes)
