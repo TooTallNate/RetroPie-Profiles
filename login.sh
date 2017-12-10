@@ -152,7 +152,7 @@ function curl_login() {
     --colors \
     --ok-label "Close" \
     --title "Login Success!" \
-    --msgbox "\nSuccessfully logged in as:\n\n    \Zb$NAME\ZB\n\n" \
+    --msgbox "\nSuccessfully logged in as:\n\n    \Zb$NAME\ZB\nProfile Directory: $PROFILE_ROOT\n\n" \
     0 0
 }
 
