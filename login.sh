@@ -126,7 +126,7 @@ function curl_login() {
 
   # not a huge deal if this fails, but we'll try anyways
   # (i.e. the root is on a NFS drive that doesn't allow permission changes)
-  chown -R $user:$user "$PROFILES_ROOT" 2>/dev/null
+  chown -R $user:$group "$PROFILES_ROOT" 2>/dev/null
 
   iniSet "savefile_directory" "$USER_SAVE_FILES"
   iniSet "savestate_directory" "$USER_SAVE_STATES"
