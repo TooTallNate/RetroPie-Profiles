@@ -105,7 +105,7 @@ function show_status_dialog() {
 }
 
 function curl_login() {
-  LOGIN=$(curl --silent --location "$LOGIN_SERVER_URL/login")
+  LOGIN=$(curl --silent --location "$LOGIN_SERVER_URL/login?hostname=$(hostname)")
   rc=$?
 
   if [ $rc -ne 0 ]; then
@@ -126,7 +126,7 @@ function curl_login() {
       --colors \
       --ok-label "Close" \
       --title "Login Error" \
-      --msgbox "\nLogin Server did not specify the ID or NAME variables!"
+      --msgbox "\nLogin Server did not specify the ID or NAME variables!" \
       0 0
     exit 1
   fi
