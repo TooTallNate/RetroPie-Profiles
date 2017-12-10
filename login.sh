@@ -190,8 +190,8 @@ function logout_current() {
 }
 
 function finish() {
-  kill $DIALOG_PID
-  kill $CURL_PID
+  kill $DIALOG_PID 2>/dev/null
+  kill $CURL_PID 2>/dev/null
   pkill "$CURL_COMMAND"
   stty -raw echo
 }
