@@ -115,7 +115,15 @@ function curl_login() {
     exit 1
   fi
 
-  PROFILE_ROOT="$PROFILES_ROOT/$ID"
+  # attempt to find a directory with the matching $ID,
+  # allowing for the name to change between login responses
+  PROFILE_ROOT="$(find "$PROFILES_ROOT" -maxdepth 1 -name "*$ID")"
+
+  if [[ -z "$PROFILE_ROOT" ]]; then
+    # default profiles dir name when no match was found
+    PROFILE_ROOT="$PROFILES_ROOT/$(echo $NAME | tr '[:upper:]' '[:lower:]' | sed 's/ /_/g')_$ID"
+  fi
+
   USER_SAVE_FILES="$PROFILE_ROOT/save-files"
   USER_SAVE_STATES="$PROFILE_ROOT/save-states"
 
