@@ -77,7 +77,7 @@ function show_status_dialog() {
     --ok-label "Cancel" \
     --no-label "Logout" \
     --title "RetroPie Profiles" \
-    --$BOX_TYPE "Currently logged in as:\n\n    \Zb$CURRENT_NAME\ZB\n\nVisit the following URL on your mobile device to log in:\n\n    \Z4\Zu$LOGIN_SERVER_URL\Z0\ZU\n\nProfiles dir: $PROFILES_ROOT\nConfig file: $CONFIG_FILE" \
+    --$BOX_TYPE "Currently logged in as:\n\n    \Zb$CURRENT_NAME\ZB\n\nVisit the following URL on your mobile device to log in:\n\n    \Z4\Zu$LOGIN_SERVER_URL\Z0\ZU\n\nProfiles directory: $PROFILES_ROOT\nConfig file: $CONFIG_FILE" \
     0 0
   rc=$?
   if [ $rc -ne 0 ]; then
