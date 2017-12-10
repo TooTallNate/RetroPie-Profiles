@@ -74,7 +74,7 @@ else
   LOGIN_SERVER_URL="$ini_value"
 fi
 
-CURL_COMMAND="curl --silent $LOGIN_SERVER_URL/login"
+CURL_COMMAND="curl --silent $LOGIN_SERVER_URL/login?hostname=$(hostname)"
 
 # display the current status info dialog and login URL
 function show_status_dialog() {
