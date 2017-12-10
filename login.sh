@@ -12,6 +12,20 @@
 user=$(stat -c "%U" "$HOME")
 group=$(stat -c "%G" "$HOME")
 
+function echo_path() {
+  dir="$1"
+  if [ ! -d "$1" ]; then
+    dir="$(dirname "$dir")"
+  fi
+  pushd "$dir" > /dev/null
+  with_tilde=$(dirs +0)
+  popd > /dev/null
+  if [ ! -d "$1" ]; then
+    with_tilde="$with_tilde/$(basename "$1")"
+  fi
+  echo "$with_tilde"
+}
+
 source "$HOME/RetroPie-Setup/scriptmodules/inifuncs.sh"
 if [ $? -ne 0 ]; then
   dialog \
@@ -77,7 +91,7 @@ function show_status_dialog() {
     --ok-label "Cancel" \
     --no-label "Logout" \
     --title "RetroPie Profiles" \
-    --$BOX_TYPE "Currently logged in as:\n\n    \Zb$CURRENT_NAME\ZB\n\nVisit the following URL on your mobile device to log in:\n\n    \Z4\Zu$LOGIN_SERVER_URL\Z0\ZU\n\nProfiles directory: $PROFILES_ROOT\nConfig file: $CONFIG_FILE" \
+    --$BOX_TYPE "Currently logged in as:\n\n    \Zb$CURRENT_NAME\ZB\n\nVisit the following URL on your mobile device to log in:\n\n    \Z4\Zu$LOGIN_SERVER_URL\Z0\ZU\n\nProfiles directory: $(echo_path "$PROFILES_ROOT")\nConfig file: $(echo_path "$CONFIG_FILE")" \
     0 0
   rc=$?
   if [ $rc -ne 0 ]; then
@@ -152,7 +166,7 @@ function curl_login() {
     --colors \
     --ok-label "Close" \
     --title "Login Success!" \
-    --msgbox "\nSuccessfully logged in as:\n\n    \Zb$NAME\ZB\nProfile Directory: $PROFILE_ROOT\n\n" \
+    --msgbox "\nSuccessfully logged in as:\n\n    \Zb$NAME\ZB\n\nProfile Directory: $(echo_path "$PROFILE_ROOT")\n\n" \
     0 0
 }
 
