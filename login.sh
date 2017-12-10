@@ -37,7 +37,9 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 
-CONFIG_FILE="/opt/retropie/configs/all/retroarch.cfg"
+if [[ -z "$CONFIG_FILE" ]]; then
+  CONFIG_FILE="/opt/retropie/configs/all/retroarch.cfg"
+fi
 iniConfig " = " '"' "$CONFIG_FILE"
 
 trap finish TERM
