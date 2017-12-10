@@ -23,7 +23,6 @@ cp icon.png "$HOME/RetroPie/retropiemenu/icons/save-profiles.png" || {
 echo " OK!"
 
 
-echo -n "Creating a gamelist.xml entry for login.sh..."
 gamelistxml="$HOME/RetroPie/retropiemenu/gamelist.xml"
 [[ -f "$gamelistxml" ]] || {
   cp "/opt/retropie/configs/all/emulationstation/gamelists/retropie/gamelist.xml" \
@@ -31,7 +30,7 @@ gamelistxml="$HOME/RetroPie/retropiemenu/gamelist.xml"
 }
 
 grep -q "<path>./login.sh</path>" "$gamelistxml" && {
-  echo " OK!!"
+  echo "gamelist.xml file already has RetroPie-Profiles entry"
   exit 0
 }
 
@@ -43,6 +42,7 @@ gamelist_info='\
     <image>.\/icons\/save-profiles.png<\/image>\
   <\/game>'
 
+echo -n "Creating a gamelist.xml entry for login.sh..."
 sudo sed -i.bak "/<\/gameList>/ s/.*/${gamelist_info}\n&/" "$gamelistxml" || {
   echo "Warning: Unable to edit \"$gamelistxml\"."
   exit 1
