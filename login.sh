@@ -12,7 +12,7 @@
 user=$(stat -c "%U" "$HOME")
 group=$(stat -c "%G" "$HOME")
 
-function echo_path() {
+function pretty_path() {
   dir="$1"
   if [ ! -d "$1" ]; then
     dir="$(dirname "$dir")"
@@ -24,6 +24,33 @@ function echo_path() {
     with_tilde="$with_tilde/$(basename "$1")"
   fi
   echo "$with_tilde"
+}
+
+fetch() {
+  local command
+  if hash curl 2>/dev/null; then
+    set +e
+    command="curl --silent --fail $1"
+    curl --silent --fail "$1"
+    rc=$?
+    set -e
+  else
+    if hash wget 2>/dev/null; then
+      set +e
+      command="wget -O- -q $1"
+      wget -O- -q "$1"
+      rc=$?
+      set -e
+    else
+      error "No HTTP download program (curl, wget) found…"
+      exit 1
+    fi
+  fi
+
+  if [ $rc -ne 0 ]; then
+    error "Command failed (exit code $rc): ${BLUE}${command}${NO_COLOR}"
+    exit $rc
+  fi
 }
 
 source "$HOME/RetroPie-Setup/scriptmodules/inifuncs.sh"
@@ -74,7 +101,7 @@ else
   LOGIN_SERVER_URL="$ini_value"
 fi
 
-CURL_COMMAND="curl --silent $LOGIN_SERVER_URL/login?hostname=$(hostname)"
+#CURL_COMMAND="curl --silent $LOGIN_SERVER_URL/login?hostname=$(hostname)"
 
 # display the current status info dialog and login URL
 function show_status_dialog() {
@@ -93,7 +120,7 @@ function show_status_dialog() {
     --ok-label "Cancel" \
     --no-label "Logout" \
     --title "RetroPie Profiles" \
-    --$BOX_TYPE "Currently logged in as:\n\n    \Zb$CURRENT_NAME\ZB\n\nVisit the following URL on your mobile device to log in:\n\n    \Z4\Zu$LOGIN_SERVER_URL\Z0\ZU\n\nProfiles directory: $(echo_path "$PROFILES_ROOT")\nConfig file: $(echo_path "$CONFIG_FILE")" \
+    --$BOX_TYPE "Currently logged in as:\n\n    \Zb$CURRENT_NAME\ZB\n\nVisit the following URL on your mobile device to log in:\n\n    \Z4\Zu$LOGIN_SERVER_URL\Z0\ZU\n\nProfiles directory: $(pretty_path "$PROFILES_ROOT")\nConfig file: $(pretty_path "$CONFIG_FILE")" \
     0 0
   rc=$?
   if [ $rc -ne 0 ]; then
@@ -104,8 +131,8 @@ function show_status_dialog() {
   fi
 }
 
-function curl_login() {
-  LOGIN=$(curl --silent --location "$LOGIN_SERVER_URL/login?hostname=$(hostname)")
+function fetch_login() {
+  LOGIN=$(fetch "$LOGIN_SERVER_URL/login?hostname=$(hostname)")
   rc=$?
 
   if [ $rc -ne 0 ]; then
@@ -113,12 +140,12 @@ function curl_login() {
       --colors \
       --ok-label "Close" \
       --title "Login Error" \
-      --msgbox "\ncurl exit code $rc: $LOGIN\n" \
+      --msgbox "\nfetch exit code $rc: $LOGIN\n" \
       0 0
     exit 1
   fi
 
-  # load the curl response as env variables. ID and NAME must be exported.
+  # load the login response as env variables. ID and NAME must be exported.
   eval $(echo "$LOGIN")
 
   if [[ -z "$ID" ]] || [[ -z "$NAME" ]]; then
@@ -168,7 +195,7 @@ function curl_login() {
     --colors \
     --ok-label "Close" \
     --title "Login Success!" \
-    --msgbox "\nSuccessfully logged in as:\n\n    \Zb$NAME\ZB\n\nProfile Directory: $(echo_path "$PROFILE_ROOT")\n\n" \
+    --msgbox "\nSuccessfully logged in as:\n\n    \Zb$NAME\ZB\n\nProfile Directory: $(pretty_path "$PROFILE_ROOT")\n\n" \
     0 0
 }
 
@@ -193,13 +220,13 @@ function logout_current() {
 
 function finish() {
   kill $DIALOG_PID 2>/dev/null
-  kill $CURL_PID 2>/dev/null
-  pkill "$CURL_COMMAND"
+  kill $FETCH_PID 2>/dev/null
+  #pkill "$CURL_COMMAND"
   stty -raw echo
 }
 
 show_status_dialog &
 DIALOG_PID=$!
-curl_login &
-CURL_PID=$!
+fetch_login &
+FETCH_PID=$!
 wait
