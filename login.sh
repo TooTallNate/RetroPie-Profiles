@@ -12,7 +12,7 @@
 user=$(stat -c "%U" "$HOME")
 group=$(stat -c "%G" "$HOME")
 
-function pretty_path() {
+pretty_path() {
   dir="$1"
   if [ ! -d "$1" ]; then
     dir="$(dirname "$dir")"
@@ -24,6 +24,10 @@ function pretty_path() {
     with_tilde="$with_tilde/$(basename "$1")"
   fi
   echo "$with_tilde"
+}
+
+error() {
+  echo "$@" >&2
 }
 
 fetch() {
@@ -42,7 +46,7 @@ fetch() {
       rc=$?
       set -e
     else
-      error "No HTTP download program (curl, wget) found…"
+      error "No HTTP client (curl, wget) found…"
       exit 1
     fi
   fi
@@ -69,7 +73,7 @@ if [[ -z "$CONFIG_FILE" ]]; then
 fi
 iniConfig " = " '"' "$CONFIG_FILE"
 
-trap finish TERM
+trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 export TOP_PID=$$
 
 # "save_profiles_directory" is the directory where user profiles will be
@@ -104,7 +108,7 @@ fi
 #CURL_COMMAND="curl --silent $LOGIN_SERVER_URL/login?hostname=$(hostname)"
 
 # display the current status info dialog and login URL
-function show_status_dialog() {
+show_status_dialog() {
   iniGet "save_profiles_current_name"
   if [[ -z "$ini_value" ]]; then
     CURRENT_NAME="** NOBODY ** 😢"
@@ -127,12 +131,12 @@ function show_status_dialog() {
     logout_current
   else
     # the user cancelled the dialog before we got a login event so close `curl`
-    kill -s TERM $TOP_PID
+    kill $TOP_PID
   fi
 }
 
-function fetch_login() {
-  LOGIN=$(fetch "$LOGIN_SERVER_URL/login?hostname=$(hostname)")
+fetch_login() {
+  LOGIN="$(fetch "$LOGIN_SERVER_URL/login?hostname=$(hostname)")"
   rc=$?
 
   if [ $rc -ne 0 ]; then
@@ -160,7 +164,7 @@ function fetch_login() {
 
   # attempt to find a directory with the matching $ID,
   # allowing for the name to change between login responses
-  PROFILE_ROOT="$(find "$PROFILES_ROOT" -maxdepth 1 -name "*$ID")"
+  PROFILE_ROOT="$(find "$PROFILES_ROOT" -maxdepth 1 -name "*$ID" | head -n1)"
 
   if [[ -z "$PROFILE_ROOT" ]]; then
     # default profiles dir name when no match was found
@@ -199,7 +203,7 @@ function fetch_login() {
     0 0
 }
 
-function logout_current() {
+logout_current() {
   iniGet "save_profiles_current_name"
   CURRENT_NAME="$ini_value"
 
@@ -218,15 +222,6 @@ function logout_current() {
   show_status_dialog
 }
 
-function finish() {
-  kill $DIALOG_PID 2>/dev/null
-  kill $FETCH_PID 2>/dev/null
-  #pkill "$CURL_COMMAND"
-  stty -raw echo
-}
-
 show_status_dialog &
-DIALOG_PID=$!
 fetch_login &
-FETCH_PID=$!
 wait
