@@ -1,0 +1,134 @@
+#!/usr/bin/env node
+const got = require('got')
+const { homedir } = require('os')
+const ndialog = require('ndialog')
+const { resolve } = require('path')
+const qr = require('qrcode-terminal')
+
+const pkg = require('../package')
+const ini = require('../lib/inifuncs')
+
+let destroy
+let dialog
+let message
+let prompt
+let config
+let configFile
+
+const home = homedir()
+
+const prettyPath = p => p.startsWith(home) ? p.replace(home, '~') : p
+
+async function loginServerPrompt() {
+  const save_profiles_login_server = await prompt('Enter the Login Server URL:', {
+    title: 'Login Server',
+    padding: { top: 1, left: 4, right: 4 }
+  })
+  if (save_profiles_login_server) {
+    const data = { save_profiles_login_server }
+    await ini.set(configFile, data)
+    Object.assign(config, data)
+    return currentStatus()
+  } else if (config.save_profiles_login_server) {
+    // user cancelled the prompt, but there's a login server already in the config
+    return currentStatus()
+  } else {
+    // user cancelled the prompt, and no previous login server in the config, bail
+    destroy()
+  }
+}
+
+async function showQrCode() {
+  let content
+  qr.generate(
+    config.save_profiles_login_server,
+    _ => (content = _)
+  )
+  await message(content, {
+    title: 'Scan QR Code'
+  })
+  return currentStatus()
+}
+
+async function doLogout() {
+  const name = config.save_profiles_current_name
+  const props = [
+    'savefile_directory',
+    'savestate_directory',
+    'save_profiles_current_id',
+    'save_profiles_current_name'
+  ]
+  await ini.unset(configFile, ...props)
+  for (const prop of props) {
+    config[prop] = null
+  }
+  await message(`{bold}${name}{/bold} has been logged out.`, {
+    tags: true,
+    title: 'Logged Out',
+    padding: { top: 1, bottom: 1, left: 4, right: 4 }
+  })
+  return currentStatus()
+}
+
+async function currentStatus() {
+  const loggedIn = Boolean(config.save_profiles_current_name)
+  const currentName = config.save_profiles_current_name || '** NOBODY ** ☹'
+
+  const buttons = ['QR Code', 'Login Server']
+  if (loggedIn) {
+    buttons.push('Logout')
+  }
+  buttons.push('Exit')
+
+  const pick = await dialog(
+    `Currently logged in as:
+
+    {bold}${currentName}{/bold}
+
+Visit the following URL on your mobile device to log in:
+
+    {blue-fg}{underline}${
+      config.save_profiles_login_server
+    }{/underline}{/blue-fg}
+
+Profiles directory: ${prettyPath(config.save_profiles_directory)}
+Config file: ${prettyPath(configFile)}`,
+    { tags: true, buttons }
+  )
+
+  switch (pick ? pick.name : 'Exit') {
+    case 'QR Code':
+      return showQrCode()
+      break;
+    case 'Login Server':
+      return loginServerPrompt()
+      break;
+    case 'Logout':
+      return doLogout()
+      break;
+    case 'Exit':
+      destroy()
+      break;
+  }
+}
+
+async function main() {
+  ;({ destroy, dialog, message, prompt } = ndialog({
+    smartCSR: true,
+    title: pkg.name
+  }))
+
+  configFile = resolve('retroarch.cfg')
+  config = await ini.get(configFile)
+
+  if (config.save_profiles_login_server) {
+    return currentStatus()
+  } else {
+    return loginServerPrompt()
+  }
+}
+
+main().catch(err => {
+  console.error(err)
+  process.exit(1)
+})
