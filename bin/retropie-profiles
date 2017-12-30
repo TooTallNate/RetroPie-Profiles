@@ -118,7 +118,7 @@ async function main() {
     title: pkg.name
   }))
 
-  configFile = resolve('retroarch.cfg')
+  configFile = process.argv[2] || '/opt/retropie/configs/all/retroarch.cfg'
   config = await ini.get(configFile)
 
   if (config.save_profiles_login_server) {

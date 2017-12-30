@@ -7,7 +7,7 @@ tag="$(git describe --tags)"
 
 mkdir -p "${dir}"
 
-pkg bin/retropie-profiles.js \
+pkg bin/retropie-profiles \
   --config package.json \
   --output "${dir}/retropie-profiles-v${tag}" \
   -t node9-alpine,node9-linux,node9-macos,node9-win
