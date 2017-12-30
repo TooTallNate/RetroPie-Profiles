@@ -83,7 +83,7 @@ async function currentStatus() {
   const pick = await dialog(
     `Currently logged in as:
 
-    {bold}${currentName}{/bold}
+    ${currentName}
 
 Visit the following URL on your mobile device to log in:
 
