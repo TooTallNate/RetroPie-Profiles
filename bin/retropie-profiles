@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 const got = require('got')
-const { homedir } = require('os')
+const url = require('url')
+const { homedir, hostname } = require('os')
 const ndialog = require('ndialog')
 const { resolve } = require('path')
 const qr = require('qrcode-terminal')
@@ -14,10 +15,29 @@ let message
 let prompt
 let config
 let configFile
+let loginReq
 
 const home = homedir()
 
 const prettyPath = p => p.startsWith(home) ? p.replace(home, '~') : p
+
+function cancelLogin() {
+  if (loginReq) {
+    loginReq.cancel()
+    loginReq = null
+  }
+}
+
+function exit() {
+  cancelLogin()
+  destroy()
+}
+
+function onError(err) {
+  process.exitCode = 1
+  exit()
+  console.error(err)
+}
 
 async function loginServerPrompt() {
   const save_profiles_login_server = await prompt('Enter the Login Server URL:', {
@@ -28,13 +48,14 @@ async function loginServerPrompt() {
     const data = { save_profiles_login_server }
     await ini.set(configFile, data)
     Object.assign(config, data)
+    cancelLogin()
     return currentStatus()
   } else if (config.save_profiles_login_server) {
     // user cancelled the prompt, but there's a login server already in the config
     return currentStatus()
   } else {
     // user cancelled the prompt, and no previous login server in the config, bail
-    destroy()
+    exit()
   }
 }
 
@@ -70,9 +91,42 @@ async function doLogout() {
   return currentStatus()
 }
 
+async function waitForLogin(loginServer) {
+  if (loginReq) {
+    return
+  }
+
+  let body
+  const parsed = url.parse(loginServer)
+  parsed.pathname = '/login'
+  parsed.query = { hostname: hostname() }
+  const loginUrl = url.format(parsed)
+  loginReq = got(loginUrl)
+  try {
+    const res = await loginReq
+    body = JSON.parse(res.body)
+    //console.log(body)
+    loginReq = null
+
+    const data = {
+      save_profiles_current_id: body.id,
+      save_profiles_current_name: body.name,
+    }
+    await ini.set(configFile, data)
+    Object.assign(config, data)
+  } catch (err) {
+    if (!(err instanceof got.CancelError)) {
+      throw err
+    }
+  }
+}
+
 async function currentStatus() {
   const loggedIn = Boolean(config.save_profiles_current_name)
+  const loginServer = config.save_profiles_login_server
   const currentName = config.save_profiles_current_name || '** NOBODY ** ☹'
+
+  waitForLogin(loginServer).catch(onError)
 
   const buttons = ['QR Code', 'Login Server']
   if (loggedIn) {
@@ -107,7 +161,7 @@ Config file: ${prettyPath(configFile)}`,
       return doLogout()
       break;
     case 'Exit':
-      destroy()
+      exit()
       break;
   }
 }
@@ -128,7 +182,4 @@ async function main() {
   }
 }
 
-main().catch(err => {
-  console.error(err)
-  process.exit(1)
-})
+main().catch(onError)
